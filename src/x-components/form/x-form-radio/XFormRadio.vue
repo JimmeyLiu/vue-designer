@@ -1,12 +1,12 @@
 <template>
 	<div
-		class="x-component x-form-input"
+		class="x-component x-form-radio"
 		:id="meta.id"
-		data-component="x-form-input"
+		data-component="x-form-radio"
 	>
 		<div v-if="mode === 'design'" class="x-component-mask"></div>
 		<a-form-item :label="label" :colon="colon">
-			<a-input v-model:value="value" @change="onChange" />
+			<a-radio-group v-model:value="value" :options="options" />
 		</a-form-item>
 	</div>
 </template>
@@ -14,7 +14,7 @@
 import { defineComponent, ref } from "vue";
 export default defineComponent({
 	props: ["meta", "data", "mode"],
-	name: "XFormInput",
+	name: "XFormRadio",
 	mounted() {
 		this.value = this.meta.defaultValue || "";
 	},
@@ -30,8 +30,13 @@ export default defineComponent({
 			let v = this.meta.properties?.colon;
 			return v === undefined ? true : v;
 		},
-		defaultValue() {
-			return this.meta.defaultValue || "";
+		options() {
+			return (
+				this.meta.properties?.options || [
+					{ label: "选项1", value: "value1" },
+					{ label: "选项2", value: "value2" },
+				]
+			);
 		},
 	},
 	setup() {

@@ -1,9 +1,9 @@
 <template>
 	<iframe
 		v-show="loaded"
-		id="preview"
-		ref="preview"
-		src="/preview.html"
+		id="simulator"
+		ref="simulator"
+		src="/simulator.html"
 		:onload="onIframeLoad"
 		style="
 			transform: scale(1);
@@ -45,7 +45,7 @@ export default defineComponent({
 		},
 		renderIframeComponents() {
 			document
-				.getElementById("preview")
+				.getElementById("simulator")
 				.contentWindow.render(this.components);
 		},
 	},

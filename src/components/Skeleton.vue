@@ -1,6 +1,6 @@
 <template>
 	<div class="skeleton-layout">
-		<skeleton-header />
+		<skeleton-header :components="components"/>
 		<div class="skeleton-body">
 			<skeleton-sider
 				@siderOpenClose="onSiderOpenClose"
@@ -24,15 +24,15 @@
 		</div>
 	</div>
 
-	<source-panel ref="sourcePane" />
-	<blockly-panel ref="javascriptPane" />
+	<!-- <source-panel ref="sourcePane" />
+	<blockly-panel ref="javascriptPane" /> -->
 </template>
 <script>
 import { defineComponent, ref } from "vue";
 import $ from "jquery";
 import PropertiesPanel from "./panel/PropertiesPanel.vue";
-import SourcePanel from "./panel/SourcePanel.vue";
-import BlocklyPanel from "./panel/BlocklyPanel.vue";
+// import SourcePanel from "./panel/SourcePanel.vue";
+// import BlocklyPanel from "./panel/BlocklyPanel.vue";
 // import DemoForm from "./DemoForm.vue";
 import SkeletonHeader from "./SkeletonHeader.vue";
 import SkeletonSider from "./SkeletonSider.vue";
@@ -42,8 +42,8 @@ import SkeletonSimulator from "./SkeletonSimulator.vue";
 export default defineComponent({
 	components: {
 		PropertiesPanel,
-		SourcePanel,
-		BlocklyPanel,
+		// SourcePanel,
+		// BlocklyPanel,
 		SkeletonHeader,
 		SkeletonSider,
 		SkeletonToolbar,
@@ -115,7 +115,7 @@ export default defineComponent({
 		onStructureSort(components) {
 			console.log("sort components");
 			this.components = components;
-			let iframe = document.getElementById("preview");
+			let iframe = document.getElementById("simulator");
 			iframe.contentWindow.render(components);
 		},
 	},
@@ -199,7 +199,9 @@ export default defineComponent({
 }
 .skeleton-simulator-container {
 	height: calc(100vh - 124px);
+	display: flex;
 	overflow: scroll;
+	margin: 0 auto;
 	background: #fff;
 }
 .ant-drawer-body {

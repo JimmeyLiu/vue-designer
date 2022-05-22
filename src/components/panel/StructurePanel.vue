@@ -72,7 +72,7 @@ export default defineComponent({
 		selectComponent(k, e) {
 			console.log(e.node);
 			document
-				.getElementById("preview")
+				.getElementById("simulator")
 				.contentWindow.clickComponent(e.node.key);
 		},
 		onClickComponent(data) {

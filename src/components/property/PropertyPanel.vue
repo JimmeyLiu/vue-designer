@@ -15,7 +15,8 @@ export default defineComponent({
 	mounted() {},
 	computed: {
 		components() {
-			return this.$xmetas[this.current.component] || [];
+			let meta = this.$xmetas[this.current.component];
+			return (meta && meta.panel && meta.panel.property) || [];
 		},
 	},
 	watch: {

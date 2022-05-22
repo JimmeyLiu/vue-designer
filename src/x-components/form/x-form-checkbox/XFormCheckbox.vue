@@ -6,7 +6,7 @@
 	>
 		<div v-if="mode === 'design'" class="x-component-mask"></div>
 		<a-form-item :label="label" :colon="colon">
-			<a-radio-group v-model:value="value" :options="options" />
+			<a-checkbox-group v-model:value="value" :options="options" />
 		</a-form-item>
 	</div>
 </template>
@@ -31,7 +31,12 @@ export default defineComponent({
 			return v === undefined ? true : v;
 		},
 		options() {
-			return this.meta.properties?.options || [];
+			return (
+				this.meta.properties?.options || [
+					{ label: "选项1", value: "value1" },
+					{ label: "选项2", value: "value2" },
+				]
+			);
 		},
 	},
 	setup() {

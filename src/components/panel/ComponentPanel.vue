@@ -81,7 +81,7 @@ export default defineComponent({
 	},
 	methods: {
 		onDragStart(evt) {
-			let iframe = document.getElementById("preview");
+			let iframe = document.getElementById("simulator");
 			iframe.contentWindow.postMessage(
 				{
 					type: "addComponent",
@@ -93,7 +93,7 @@ export default defineComponent({
 			);
 		},
 		onDragEnd(evt) {
-			let iframe = document.getElementById("preview");
+			let iframe = document.getElementById("simulator");
 			iframe.contentWindow.postMessage(
 				{
 					type: "onComponentDrop",

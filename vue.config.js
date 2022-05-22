@@ -15,15 +15,20 @@ module.exports = {
       });
   },
   pages: {
-    mod1: {
+    index: {
       template: "public/index.html",
       entry: "src/pages/index/main.js",
       filename: "index.html",
     },
-    mod2: {
+    preview: {
       template: "public/index.html",
       entry: "src/pages/preview/main.js",
       filename: "preview.html",
+    },
+    simulator: {
+      template: "public/index.html",
+      entry: "src/pages/simulator/main.js",
+      filename: "simulator.html",
     },
   },
 };
