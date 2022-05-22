@@ -1,0 +1,41 @@
+{
+    "name": "x-form-input",
+    "title": "单行文本",
+    "properties": {
+        "label": {
+            "name": "label",
+            "title": "标题",
+            "description": "表单项标题",
+            "dataType": "STRING",
+            "defaultValue": "单行文本",
+            "render": {
+                "component": "prop-input"
+            }
+        },
+        "allowClear": {
+            "name": "allowClear",
+            "title": "删除内容",
+            "description": "可以点击清除图标删除内容",
+            "dataType": "boolean",
+            "defaultValue": false,
+            "valueBindAble": true,
+            "render": {
+                "component": "prop-switch",
+                "properties": {}
+            }
+        }
+    },
+    "events": [
+        {
+            "name": "change",
+            "description": "输入框内容变化时的回调"
+        },
+        {
+            "name": "pressEnter",
+            "description": "按下回车的回调"
+        }
+    ],
+    "methods":{
+        
+    }
+}
