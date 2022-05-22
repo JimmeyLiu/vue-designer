@@ -1,0 +1,29 @@
+[
+    {
+        "id": "form",
+        "component": "x-form",
+        "properties": {
+            "labelAlign": "left",
+            "labelSpan": 4,
+            "wrapperSpan": 20
+        },
+        "children": [
+            {
+                "id": "label",
+                "component": "x-form-input",
+                "properties": {
+                    "label": "对齐方式",
+                    "colon": false
+                }
+            },
+            {
+                "id": "description",
+                "component": "x-form-input",
+                "properties": {
+                    "label": "描述",
+                    "colon": false
+                }
+            }
+        ]
+    }
+]
