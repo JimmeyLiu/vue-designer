@@ -27,7 +27,7 @@ export default defineComponent({
 	mounted() {},
 	computed: {
 		labelAlign() {
-			return this.meta.properties?.labelAlign || "left";
+			return this.meta.properties?.labelAlign || "right";
 		},
 		labelCol() {
 			return {
