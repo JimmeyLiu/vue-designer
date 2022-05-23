@@ -1,6 +1,6 @@
 <template>
 	<div class="skeleton-layout">
-		<skeleton-header :components="components"/>
+		<skeleton-header :components="components" />
 		<div class="skeleton-body">
 			<skeleton-sider
 				@siderOpenClose="onSiderOpenClose"
@@ -66,6 +66,11 @@ export default defineComponent({
 	},
 	mounted() {
 		this.bindComponentsChange();
+		let json = localStorage.getItem("components");
+		if (json) {
+			this.components = JSON.parse(json);
+		}
+		console.log(this.components);
 		this.initComponents();
 	},
 	methods: {
@@ -110,7 +115,7 @@ export default defineComponent({
 			}
 		},
 		initComponents() {
-			this.$refs.simulator.render([{ id: "form", component: "x-form" }]);
+			this.$refs.simulator.render(this.components);
 		},
 		onStructureSort(components) {
 			console.log("sort components");

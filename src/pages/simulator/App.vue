@@ -88,7 +88,11 @@ export default defineComponent({
 			});
 		},
 		render(components) {
+			if (!components || components.length === 0) {
+				components = [{ id: "div", component: "x-div" }];
+			}
 			this.components = components;
+
 			this.$nextTick(() => {
 				this.bindDnd();
 				this.bindSortable("container");
@@ -203,6 +207,7 @@ export default defineComponent({
 		dispatchParentEvent() {},
 		bindDnd() {
 			// let actionHeight = $("#toolbar").height();
+
 			$(".x-component").mouseover(function (e) {
 				e.stopPropagation();
 			});
@@ -212,14 +217,13 @@ export default defineComponent({
 			let _this = this;
 			$(".x-component").click((e) => {
 				e.stopPropagation();
-				if ($(e.target).hasClass("x-component")) {
-					_this.bindComponentClick($(e.target));
+				let target = $(e.target);
+				if (target.hasClass("x-component")) {
+					_this.bindComponentClick(target);
+				} else if (target.parent().hasClass("x-component")) {
+					//重新编辑的时候 target获取的是x-component-mask，需要获取其parent进行绑定
+					_this.bindComponentClick(target.parent());
 				}
-				// else {
-				// 	let p = $(e.target).parent(".x-component");
-				// 	console.log("bindComponentClick parent", p, $(e.target));
-				// 	_this.bindComponentClick($(p[0]));
-				// }
 			});
 		},
 

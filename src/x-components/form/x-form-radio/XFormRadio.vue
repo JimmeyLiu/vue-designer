@@ -23,7 +23,7 @@ export default defineComponent({
 			return (
 				(this.data && this.data[this.meta.id]) ||
 				this.meta.properties?.label ||
-				"标题"
+				"单选框"
 			);
 		},
 		colon() {

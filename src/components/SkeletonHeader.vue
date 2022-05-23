@@ -5,7 +5,9 @@
 		</div>
 		<div class="right">
 			<a-button class="action-item" @click="preview">预览</a-button>
-			<a-button class="action-item" type="primary">保存</a-button>
+			<a-button class="action-item" @click="saveSchema" type="primary"
+				>保存</a-button
+			>
 		</div>
 	</div>
 	<a-modal
@@ -50,6 +52,10 @@ export default defineComponent({
 		},
 	},
 	methods: {
+		saveSchema() {
+			localStorage.setItem("components", JSON.stringify(this.components));
+			this.$message.success("保存成功");
+		},
 		preview() {
 			this.showPreview = true;
 		},

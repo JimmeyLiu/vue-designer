@@ -14,9 +14,9 @@
 import { defineComponent, ref } from "vue";
 export default defineComponent({
 	props: ["meta", "data", "mode"],
-	name: "XFormInput",
+	name: "XFormSwitch",
 	mounted() {
-		this.value = this.meta.properties?.defaultValue || "";
+		this.value = this.meta.defaultValue || false;
 	},
 	computed: {
 		label() {
@@ -29,7 +29,7 @@ export default defineComponent({
 	},
 	setup() {
 		return {
-			value: ref(""),
+			value: ref(false),
 		};
 	},
 	methods: {

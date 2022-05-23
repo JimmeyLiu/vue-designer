@@ -30,7 +30,7 @@ export default defineComponent({
 
 	setup() {
 		return {
-			value: ref(""),
+			value: ref([]),
 		};
 	},
 });

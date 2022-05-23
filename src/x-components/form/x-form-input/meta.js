@@ -1,4 +1,4 @@
-const perpertiesPanel = {
+const perpertyPanel = {
   form: {
     id: "form",
     component: "x-form",
@@ -9,11 +9,30 @@ const perpertiesPanel = {
       {
         id: "label",
         component: "x-form-input",
-        defaultValue:"标题1",
         properties: {
           label: "标题",
           colon: false,
         },
+        defaultValue: "单行文本",
+      },
+      {
+        id: "labelColon",
+        component: "x-form-switch",
+        properties: {
+          label: "标题冒号",
+          colon: false,
+        },
+        defaultValue: true,
+      },
+      {
+        id: "labelAlign",
+        component: "x-form-radio",
+        properties: {
+          label: "对齐方式",
+          colon: false,
+          options: ["left", "right"],
+        },
+        defaultValue: "left",
       },
       {
         id: "defaultValue",
@@ -50,6 +69,6 @@ export default {
   title: "单行文本",
   group: "form",
   panel: {
-    property: perpertiesPanel,
+    property: perpertyPanel,
   },
 };

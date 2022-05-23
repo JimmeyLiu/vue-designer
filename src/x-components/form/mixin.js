@@ -6,9 +6,7 @@ export default {
   computed: {
     label() {
       return (
-        (this.data && this.data[this.meta.id]) ||
-        this.meta.properties?.label ||
-        "标题"
+        (this.data && this.data[this.meta.id]) || this.meta.value || "标题"
       );
     },
     colon() {

@@ -39,6 +39,7 @@ export default defineComponent({
 		tree() {
 			console.log("tree", this.components);
 			let tree = [];
+
 			this.components.forEach((component) => {
 				this.appendTree(tree, component);
 			});
@@ -49,14 +50,11 @@ export default defineComponent({
 		onDrop(info) {
 			console.log("drop", this.tree, info);
 			this.$emit("sort", this.components);
-			
 		},
 		appendTree(tree, component) {
+			let xmetas = this.$xmetas;
 			let title =
-				(component.properties?.label || component.component) +
-				"(" +
-				component.id +
-				")";
+				xmetas[component.component].title + "(" + component.id + ")";
 			let node = {
 				title,
 				key: component.id,

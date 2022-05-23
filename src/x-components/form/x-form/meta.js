@@ -1,5 +1,5 @@
-const perpertiesPanel = {
-  form: {
+const perpertiesPanel = [
+  {
     id: "form",
     component: "x-form",
     properties: {
@@ -7,41 +7,36 @@ const perpertiesPanel = {
     },
     children: [
       {
-        id: "label",
-        component: "x-form-input",
+        id: "labelAlign",
+        component: "x-form-radio",
         properties: {
-          label: "标题",
+          label: "对齐方式",
           colon: false,
+          options: ["left", "right"],
         },
+        defaultValue: "left",
       },
       {
-        id: "defaultValue",
-        component: "x-form-input",
-        defaultValue: "这是默认值",
+        id: "labelSpan",
+        component: "x-form-input-number",
         properties: {
-          label: "默认值",
+          label: "标签宽",
           colon: false,
         },
+        defaultValue: 6,
       },
       {
-        id: "description",
-        component: "x-form-input",
+        id: "wrapperSpan",
+        component: "x-form-input-number",
         properties: {
-          label: "描述",
+          label: "内容宽",
           colon: false,
         },
-      },
-      {
-        id: "disabled",
-        component: "x-form-switch",
-        properties: {
-          label: "是否禁用",
-          colon: false,
-        },
+        defaultValue: 18,
       },
     ],
   },
-};
+];
 import XForm from "./XForm.vue";
 export default {
   name: "x-form",
@@ -49,10 +44,6 @@ export default {
   title: "表单容器",
   group: "form",
   panel: {
-    properties: perpertiesPanel,
-  },
-  init: () => {},
-  accept: () => {
-    return false;
+    property: perpertiesPanel,
   },
 };

@@ -21,5 +21,10 @@ export default defineComponent({
 			value: ref(""),
 		};
 	},
+	computed: {
+		label() {
+			return this.meta.properties?.label || "标题";
+		},
+	},
 });
 </script>
