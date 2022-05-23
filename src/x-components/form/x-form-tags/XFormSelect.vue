@@ -1,5 +1,5 @@
 <template>
-	<div class="x-component x-form-select" :id="meta.id">
+	<div class="x-component x-form-tags" data-component="x-form-tags" :id="meta.id">
 		<div v-if="mode === 'design'" class="x-component-mask"></div>
 		<a-form-item :label="label">
 			<a-select

@@ -23,9 +23,8 @@
 </template>
 <script>
 import { defineComponent, ref } from "vue";
-import formMixin from "../mixin";
 export default defineComponent({
-	mixins: [formMixin],
+	props: ["meta", "data", "mode"],
 	name: "XFormUpload",
 	setup() {
 		return {
@@ -34,6 +33,20 @@ export default defineComponent({
 	},
 	methods: {
 		handleChange() {},
+	},
+
+	computed: {
+		label() {
+			return (
+				(this.data && this.data[this.meta.id]) ||
+				this.meta.value ||
+				"文件上传"
+			);
+		},
+		colon() {
+			let v = this.meta.properties?.colon;
+			return v === undefined ? true : v;
+		},
 	},
 });
 </script>

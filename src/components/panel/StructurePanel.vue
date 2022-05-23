@@ -53,8 +53,13 @@ export default defineComponent({
 		},
 		appendTree(tree, component) {
 			let xmetas = this.$xmetas;
-			let title =
-				xmetas[component.component].title + "(" + component.id + ")";
+			let c = xmetas[component.component];
+			let title;
+			if (c) {
+				title = (c && c.title) + "(" + component.id + ")";
+			} else {
+				title = component.id;
+			}
 			let node = {
 				title,
 				key: component.id,

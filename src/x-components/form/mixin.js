@@ -17,4 +17,7 @@ export default {
       return this.meta.defaultValue || "";
     },
   },
+  methods: {
+    onChange() {},
+  },
 };

@@ -16,7 +16,7 @@ export default defineComponent({
 	props: ["meta", "data", "mode"],
 	name: "XFormRadio",
 	mounted() {
-		this.value = this.meta.defaultValue || "";
+		this.value = this.meta.defaultValue || [];
 	},
 	computed: {
 		label() {
@@ -41,7 +41,7 @@ export default defineComponent({
 	},
 	setup() {
 		return {
-			value: ref(""),
+			value: ref([]),
 		};
 	},
 	methods: {

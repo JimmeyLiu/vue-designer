@@ -1,4 +1,7 @@
 <template>
+	<div id="shadow">
+		<div class="x-component"></div>
+	</div>
 	<div id="container">
 		<component
 			v-for="cmp in components"
@@ -44,24 +47,14 @@ export default defineComponent({
 		return {
 			mode: ref("design"),
 			components: ref([]),
+			componentMap: ref({}),
 		};
-	},
-	computed: {
-		componentMap() {
-			let map = {};
-			this.components.forEach((it) => {
-				map[it.id] = it;
-				this.collectChildren(map, it);
-			});
-			return map;
-		},
 	},
 	mounted() {
 		window.render = this.render;
 		window.clickComponent = this.clickComponent;
-		// this.bindDnd();
-		// this.bindSortable("container");
-		this.bindClickBlank();
+		this.initParentMessage();
+		this.initShadow();
 	},
 	watch: {
 		components: {
@@ -74,154 +67,134 @@ export default defineComponent({
 					},
 					"*"
 				);
+				this.buildComponentMap();
 			},
 		},
 	},
 	methods: {
-		collectChildren(map, component) {
-			if (!component.children) {
-				return;
-			}
-			component.children.forEach((it) => {
+		buildComponentMap() {
+			let map = {};
+			this.components.forEach((it) => {
 				map[it.id] = it;
 				this.collectChildren(map, it);
 			});
+			this.componentMap = map;
 		},
-		render(components) {
-			if (!components || components.length === 0) {
-				components = [{ id: "div", component: "x-div" }];
-			}
-			this.components = components;
-
-			this.$nextTick(() => {
-				this.bindDnd();
-				this.bindSortable("container");
+		initShadow() {
+			Sortable.create(document.getElementById("shadow"), {
+				group: {
+					name: "shared",
+					pull: "clone",
+					put: false,
+				},
 			});
 		},
-		clickComponent(id) {
-			$("#" + id).click();
-		},
-		bindSortable(id) {
-			window.toAddComponent = null;
-			let localSort = false;
+		initSortable(id) {
 			let componentMap = this.componentMap;
 			let _this = this;
 			let container = "#" + id + " .x-component-slot";
 			$(container).each((i, el) => {
 				Sortable.create(el, {
 					group: {
-						name: id,
-						pull: "clone",
+						name: "shared",
+						put: true,
+						pull: false,
 					},
-					animation: 100,
 					draggable: ".x-component",
-					fallbackOnBody: true,
 					ghostClass: "ghost",
-					onStart: function (/**Event*/) {
-						localSort = true;
-						window.dragging = true;
-						$("#toolbar").hide();
-						$("#container .x-component")
-							.removeClass("hover")
-							.removeClass("choosed");
-					},
-					onAdd(evt) {
-						console.log("add evt", evt);
-					},
-					onEnd: function (evt) {
-						window.dragging = false;
-						$(evt.item).click();
-						let pid = $(el).attr("pid");
-						let component = _this.componentMap[pid];
-						if (component && component.children) {
-							component.children = _this.moveItem(
-								component.children,
-								evt.oldIndex,
-								evt.newIndex
-							);
-						}
-						localSort = false;
-					},
-				});
-
-				el.addEventListener("dragleave", (e) => {
-					if (localSort) {
-						return;
-					}
-					if (_this.notInContainer(el, e)) {
-						$(e.target).removeClass("hover");
-					}
-					e.stopPropagation();
-				});
-				el.addEventListener("dragover", (e) => {
-					e.preventDefault();
-				});
-				el.addEventListener("dragenter", (e) => {
-					if (localSort) {
-						return;
-					}
-					// $(e.target).addClass("hover");
-					e.stopPropagation();
-				});
-				el.addEventListener("drop", (e) => {
-					if (localSort) {
-						return;
-					}
-					e.stopPropagation();
-					console.log("toAddComponent", window.toAddComponent);
-					let meta = this.$xmetas[window.toAddComponent];
-					if (!meta) {
-						return;
-					}
-					let child;
-					if (meta.init && typeof meta.init === "function") {
-						child = meta.init();
-					} else {
-						child = {
-							id: createUniqueId(),
-							component: window.toAddComponent,
-						};
-					}
-					let parentId = $(el).attr("pid");
-					let c = componentMap[parentId]?.children || [];
-					c.push(child);
-					componentMap[parentId].children = c;
-					let cid = child.id;
-					_this.$nextTick(() => {
-						_this.bindSortable(cid);
-						let target = $("#" + cid);
-						target.click((e) => {
-							e.stopPropagation();
-							_this.bindComponentClick(target);
+					onEnd(evt) {
+						let parentEl = $(evt.item).parent(".x-component-slot");
+						let pid = parentEl.attr("pid");
+						let parent = componentMap[pid] || {};
+						let children = [];
+						parentEl.children(".x-component").each((i, el) => {
+							let id = $(el).attr("id");
+							if (!id) {
+								return;
+							}
+							let c = componentMap[id];
+							if (c) {
+								children.push(c);
+							} else {
+								console.log("move error", id);
+							}
 						});
-						target.click();
-					});
+						parent.children = children;
+						$(evt.item).click();
+					},
+					onChoose() {},
+
+					onAdd(evt) {
+						console.log("onAdd", evt);
+						let meta = _this.$xmetas[window.toAddComponent];
+						if (!meta) {
+							return;
+						}
+						let child;
+						if (meta.init && typeof meta.init === "function") {
+							child = meta.init();
+						} else {
+							child = {
+								id: createUniqueId(),
+								component: window.toAddComponent,
+							};
+						}
+						let parentId = $(el).attr("pid");
+						let c = componentMap[parentId]?.children || [];
+						if (c.length === 0) {
+							c.push(child);
+						} else {
+							c.splice(evt.newIndex, 0, child);
+						}
+
+						componentMap[parentId].children = c;
+						let cid = child.id;
+						componentMap[cid] = child;
+						_this.$nextTick(() => {
+							_this.initSortable(cid);
+							let target = $("#" + cid);
+							target.click((e) => {
+								e.stopPropagation();
+								_this.bindComponentClick(target);
+							});
+							target.click();
+						});
+					},
 				});
-			});
-			window.onmessage = function (e) {
-				if (e.data.type == "addComponent") {
-					// el = e.data.data.innerHTML;
-					window.toAddComponent = e.data.data.component;
-				} else if (e.data.type === "onComponentDrop") {
-					//
-					window.toAddComponent = null;
-				}
-			};
-			document.addEventListener("drop", (e) => {
-				console.log("child dragend", e);
 			});
 		},
 
-		dispatchParentEvent() {},
-		bindDnd() {
-			// let actionHeight = $("#toolbar").height();
+		initParentMessage() {
+			let _this = this;
+			window.onmessage = function (e) {
+				if (e.data.type == "addComponent") {
+					console.log("addComponent");
+					window.toAddComponent = e.data.data.component;
+					_this.initShadowAdd();
+					//test();
+				} else if (e.data.type === "onComponentDrop") {
+					//dragEl.dispatchEvent(new DragEvent("dragend"));
+					window.cloneHTML = "";
+				}
+			};
+		},
 
-			$(".x-component").mouseover(function (e) {
-				e.stopPropagation();
+		initShadowAdd() {
+			let dragEl = document.getElementById("shadow").firstElementChild;
+			var startEvt = new DragEvent("dragstart", { bubbles: true });
+			var downEvt = new PointerEvent("pointerdown", {
+				//    pointerId: 1,
+				bubbles: true,
+				cancelable: true,
+				// pointerType: "touch",
+				width: 100,
+				height: 100,
+				isPrimary: true,
 			});
-			$(".x-component").mouseleave(function (e) {
-				e.stopPropagation();
-			});
+			dragEl.dispatchEvent(downEvt);
+			dragEl.dispatchEvent(startEvt);
+		},
+		bindClick() {
 			let _this = this;
 			$(".x-component").click((e) => {
 				e.stopPropagation();
@@ -234,7 +207,6 @@ export default defineComponent({
 				}
 			});
 		},
-
 		bindComponentClick(target) {
 			let id = target.attr("id");
 			console.log("bindComponentClick", target, id);
@@ -261,15 +233,28 @@ export default defineComponent({
 			}
 		},
 
-		deleteComponent() {
-			let id = $("#toolbar").attr("target-id");
-			let r = this.removeComponent(this.components, id);
-			if (r) {
-				$("#toolbar").hide();
+		collectChildren(map, component) {
+			if (!component.children) {
+				return;
 			}
-			this.sendUnChoosed();
+			component.children.forEach((it) => {
+				map[it.id] = it;
+				this.collectChildren(map, it);
+			});
 		},
-
+		render(components) {
+			if (!components || components.length === 0) {
+				components = [{ id: "div", component: "x-div" }];
+			}
+			this.components = components;
+			this.$nextTick(() => {
+				this.initSortable("container");
+				this.bindClick();
+			});
+		},
+		clickComponent(id) {
+			$("#" + id).click();
+		},
 		showToolbar(id, clientTop, clietHeight, clientRight) {
 			let actionWidth = $("#toolbar").width();
 			let actionHeight = $("#toolbar").height();
@@ -283,7 +268,22 @@ export default defineComponent({
 			});
 			$("#toolbar").attr("target-id", id).show();
 		},
-
+		deleteComponent() {
+			let id = $("#toolbar").attr("target-id");
+			let r = this.removeComponent(this.components, id);
+			if (r) {
+				$("#toolbar").hide();
+			}
+			this.sendUnChoosed();
+		},
+		sendUnChoosed() {
+			window.parent.postMessage(
+				{
+					type: "unChoosed",
+				},
+				"*"
+			);
+		},
 		removeComponent(arr, id) {
 			if (!arr || arr.length === 0) {
 				return;
@@ -301,48 +301,6 @@ export default defineComponent({
 				}
 			}
 			return false;
-		},
-		notInContainer(el, e) {
-			let x = e.pageX;
-			let y = e.pageY;
-			let div = $(el); //获取你想要的DIV
-			let y1 = div.offset().top; //div上面两个的点的y值
-			let y2 = y1 + div.height(); //div下面两个点的y值
-			let x1 = div.offset().left; //div左边两个的点的x值
-			let x2 = x1 + div.width(); //div右边两个点的x的值
-			console.log("notInContainer", x, x1, x2, y, y1, y2);
-			return x < x1 || x > x2 || y < y1 || y > y2;
-		},
-		//点击非组件元素区域把旋转状态等清除
-		bindClickBlank() {
-			let _this = this;
-			$("body").click(function () {
-				$("#toolbar").hide();
-				$(".hover").removeClass("hover");
-				$(".choosed").removeClass("choosed");
-				_this.sendUnChoosed();
-			});
-		},
-		sendUnChoosed() {
-			window.parent.postMessage(
-				{
-					type: "unChoosed",
-				},
-				"*"
-			);
-		},
-
-		// fromIndex: 当前元素所在位置索引, toIndex: 移动到指定索引
-		moveItem(arr, fromIndex, toIndex) {
-			for (var k in arr) {
-				var item = arr[k];
-				if (k == fromIndex) {
-					arr.splice(k, 1);
-					arr.splice(toIndex, 0, item);
-					break;
-				}
-			}
-			return arr;
 		},
 	},
 });
@@ -412,9 +370,10 @@ export default defineComponent({
 .ghost {
 	background-color: #197afe !important;
 	font-size: 0;
-	height: 2px !important;
-	line-height: 2px !important;
+	height: 0 !important;
+	line-height: 0 !important;
 	overflow: hidden;
 	padding: 1px 0 !important;
+	border: 1px solid #197afe !important;
 }
 </style>

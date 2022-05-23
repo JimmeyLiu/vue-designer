@@ -11,7 +11,7 @@ const perpertiesPanel = {
         component: "x-form-input",
         defaultValue: "标题1",
         properties: {
-          label: "标题",
+          label: "富文本",
           colon: false,
         },
       },

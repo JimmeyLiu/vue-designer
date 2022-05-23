@@ -18,7 +18,7 @@
 		height="100%"
 		:centered="true"
 		:bodyStyle="{ padding: 0 }"
-		z-index="4000"
+		:z-index="4000"
 		:forceRender="true"
 	>
 		<iframe

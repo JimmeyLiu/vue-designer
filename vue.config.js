@@ -1,16 +1,17 @@
 module.exports = {
   devServer: {},
+  runtimeCompiler: true,
   chainWebpack: (config) => {
     config.module
       .rule("vue")
       .use("vue-loader")
       .tap((options) => {
-        options["compilerOptions"] = {
-          ...(options.compilerOptions || {}),
-          isCustomElement: (tag) => {
-            return tag === "xml";
-          },
-        };
+        // options["compilerOptions"] = {
+        //   ...(options.compilerOptions || {}),
+        //   isCustomElement: (tag) => {
+        //     return tag === "xml";
+        //   },
+        // };
         return options;
       });
   },

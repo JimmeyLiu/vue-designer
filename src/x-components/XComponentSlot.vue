@@ -10,7 +10,15 @@
 				:mode="mode"
 			/>
 		</template>
-		<div v-if="mode === 'design'" class="x-component-slot-placeholder">拖拽组件到这里</div>
+		<div
+			v-if="
+				mode === 'design' &&
+				(!meta || !meta.children || meta.children.length == 0)
+			"
+			class="x-component-slot-placeholder"
+		>
+			拖拽组件到这里
+		</div>
 	</div>
 </template>
 <script>

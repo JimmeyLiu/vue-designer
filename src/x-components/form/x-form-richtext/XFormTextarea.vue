@@ -1,8 +1,8 @@
 <template>
 	<div
-		class="x-component x-form-textarea"
+		class="x-component x-form-richtext"
 		:id="meta.id"
-		data-component="x-form-textarea"
+		data-component="x-form-richtext"
 	>
 		<div v-if="mode === 'design'" class="x-component-mask"></div>
 		<a-form-item :label="label" :colon="colon">
@@ -20,6 +20,15 @@ export default defineComponent({
 		return {
 			value: ref(""),
 		};
+	},
+	computed: {
+		label() {
+			return (
+				(this.data && this.data[this.meta.id]) ||
+				this.meta.value ||
+				"富文本"
+			);
+		},
 	},
 });
 </script>

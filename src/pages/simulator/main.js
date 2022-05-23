@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 import Antd from "ant-design-vue";
-import App from "./App";
+import App from "./Simulator";
 import "ant-design-vue/dist/antd.css";
 import "../../style/reset.css";
 import * as antIcons from "@ant-design/icons-vue";
