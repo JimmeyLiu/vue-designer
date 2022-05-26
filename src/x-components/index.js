@@ -1,9 +1,11 @@
 // 引入写好的全局组件
 import form from "./form";
 import layout from "./layout";
+import basic from "./basic";
+
 import XComponentSlot from "./XComponentSlot.vue";
 const components = [];
-const types = [form, layout];
+const types = [basic, layout, form];
 // 默认导出插件
 export default {
   install: function (app) {

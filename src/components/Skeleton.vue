@@ -1,11 +1,17 @@
 <template>
 	<div class="skeleton-layout">
-		<skeleton-header :components="components" />
+		<skeleton-header
+			:components="components"
+			:datasources="datasources"
+			@save="onSave"
+		/>
 		<div class="skeleton-body">
 			<skeleton-sider
 				@siderOpenClose="onSiderOpenClose"
 				:components="components"
+				:datasources="datasources"
 				@sort="onStructureSort"
+				@updateDatasources="onUpdateDatasources"
 				ref="skeletonSider"
 			/>
 			<div :class="mainClass">
@@ -19,7 +25,12 @@
 				</div>
 			</div>
 			<div class="skeleton-property">
-				<properties-panel ref="propertiesPanel" />
+				<properties-panel
+					ref="propertiesPanel"
+					:components="components"
+					:datasources="datasources"
+					@change="onPropertiesChange"
+				/>
 			</div>
 		</div>
 	</div>
@@ -29,7 +40,7 @@
 </template>
 <script>
 import { defineComponent, ref } from "vue";
-import $ from "jquery";
+// import $ from "jquery";
 import PropertiesPanel from "./panel/PropertiesPanel.vue";
 // import SourcePanel from "./panel/SourcePanel.vue";
 // import BlocklyPanel from "./panel/BlocklyPanel.vue";
@@ -42,8 +53,6 @@ import SkeletonSimulator from "./SkeletonSimulator.vue";
 export default defineComponent({
 	components: {
 		PropertiesPanel,
-		// SourcePanel,
-		// BlocklyPanel,
 		SkeletonHeader,
 		SkeletonSider,
 		SkeletonToolbar,
@@ -54,6 +63,8 @@ export default defineComponent({
 		return {
 			siderOpen: ref(false),
 			components: ref([]),
+			datasources: ref([]),
+			componentMap: ref({}),
 		};
 	},
 	computed: {
@@ -66,27 +77,34 @@ export default defineComponent({
 	},
 	mounted() {
 		this.bindComponentsChange();
-		let json = localStorage.getItem("components");
-		if (json) {
-			this.components = JSON.parse(json);
-		}
-		console.log(this.components);
 		this.initComponents();
+	},
+	watch: {
+		components: {
+			deep: true,
+			handler() {
+				let map = {};
+				this.components.forEach((it) => {
+					map[it.id] = it;
+					this.collectChildren(map, it);
+				});
+				this.componentMap = map;
+			},
+		},
 	},
 	methods: {
 		bindComponentsChange() {
 			let _this = this;
 			window.onmessage = function (e) {
-				console.log("message", e.data);
 				if (e.data.type === "componentsChange") {
 					console.log(e.data);
 					_this.components = JSON.parse(e.data.components);
 					return;
 				}
 				if (e.data.type === "clickComponent") {
-					console.log(_this.$refs);
-					_this.$refs.propertiesPanel.onClickComponent(e.data);
-					_this.$refs.skeletonSider.onClickComponent(e.data);
+					let meta = _this.componentMap[e.data.id];
+					_this.$refs.propertiesPanel.onClickComponent(meta);
+					_this.$refs.skeletonSider.onClickComponent(meta);
 				}
 				if (e.data.type === "unChoosed") {
 					_this.$refs.propertiesPanel.onClickComponent({});
@@ -97,31 +115,51 @@ export default defineComponent({
 		onSiderOpenClose(open) {
 			this.siderOpen = open;
 		},
-		openComponentPane() {
-			this.closeAllPane();
-			$("#component-pane").show();
+		//保存schema的处理，改成对应的接口
+		onSave() {
+			this.saveToLocalStorage();
+			this.$message.success("保存成功");
 		},
-		closeComponentPane() {
-			$("#component-pane").hide();
-		},
-		openPane(refId) {
-			this.siderPanel = refId;
-			this.siderOpen = true;
-		},
-		closeAllPane() {
-			this.closeComponentPane();
-			for (let pane in this.$refs) {
-				this.$refs[pane].close();
-			}
+		saveToLocalStorage() {
+			let data = {
+				components: this.components,
+				datasources: this.datasources,
+			};
+
+			let json = JSON.stringify(data);
+			localStorage.setItem("component", json);
 		},
 		initComponents() {
+			let json = localStorage.getItem("component");
+			if (json) {
+				let d = JSON.parse(json);
+				this.components = d.components;
+				this.datasources = d.datasources;
+			}
+			console.log("datasources", this.datasources);
+
+			this.$refs.simulator.render(this.components);
+		},
+		onPropertiesChange(meta) {
+			this.componentMap[meta.id].properties = meta.properties;
 			this.$refs.simulator.render(this.components);
 		},
 		onStructureSort(components) {
-			console.log("sort components");
 			this.components = components;
 			let iframe = document.getElementById("simulator");
 			iframe.contentWindow.render(components);
+		},
+		collectChildren(map, component) {
+			if (!component.children) {
+				return;
+			}
+			component.children.forEach((it) => {
+				map[it.id] = it;
+				this.collectChildren(map, it);
+			});
+		},
+		onUpdateDatasources(d) {
+			this.datasources = d;
 		},
 	},
 });

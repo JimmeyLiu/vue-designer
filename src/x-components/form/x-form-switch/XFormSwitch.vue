@@ -6,7 +6,13 @@
 	>
 		<div v-if="mode === 'design'" class="x-component-mask"></div>
 		<a-form-item :label="label" :colon="colon">
-			<a-switch v-model:checked="value" @change="onChange" />
+			<a-switch
+				v-model:checked="value"
+				@change="onChange"
+				:checkedChildren="checkedChildren"
+				:unCheckedChildren="unCheckedChildren"
+				:disabled="disabled"
+			/>
 		</a-form-item>
 	</div>
 </template>
@@ -16,15 +22,28 @@ export default defineComponent({
 	props: ["meta", "data", "mode"],
 	name: "XFormSwitch",
 	mounted() {
-		this.value = this.meta.defaultValue || false;
+		this.value = this.meta.properties?.defaultValue || false;
+	},
+	watch: {
+		"meta.properties.defaultValue"() {
+			this.value = this.meta.properties?.defaultValue || false;
+		},
 	},
 	computed: {
 		label() {
 			return this.meta.properties?.label || "开关";
 		},
 		colon() {
-			let v = this.meta.properties?.colon;
-			return v === undefined ? true : v;
+			return this.meta.properties?.colon;
+		},
+		checkedChildren() {
+			return this.meta.properties?.checkedChildren;
+		},
+		unCheckedChildren() {
+			return this.meta.properties?.unCheckedChildren;
+		},
+		disabled() {
+			return this.meta.properties?.status === "disabled";
 		},
 	},
 	setup() {

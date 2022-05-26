@@ -6,7 +6,12 @@
 	>
 		<div v-if="mode === 'design'" class="x-component-mask"></div>
 		<a-form-item :label="label" :colon="colon">
-			<a-radio-group v-model:value="value" :options="options" />
+			<a-radio-group
+				v-model:value="value"
+				:options="options"
+				:disabled="disabled"
+				:optionType="optionType"
+			/>
 		</a-form-item>
 	</div>
 </template>
@@ -16,27 +21,23 @@ export default defineComponent({
 	props: ["meta", "data", "mode"],
 	name: "XFormRadio",
 	mounted() {
-		this.value = this.meta.defaultValue || "";
+		this.setValue();
 	},
 	computed: {
 		label() {
-			return (
-				(this.data && this.data[this.meta.id]) ||
-				this.meta.properties?.label ||
-				"单选框"
-			);
+			return this.meta.properties?.label || "单选框";
 		},
 		colon() {
-			let v = this.meta.properties?.colon;
-			return v === undefined ? true : v;
+			return this.meta.properties?.colon;
 		},
 		options() {
-			return (
-				this.meta.properties?.options || [
-					{ label: "选项1", value: "value1" },
-					{ label: "选项2", value: "value2" },
-				]
-			);
+			return this.meta.properties?.options || [];
+		},
+		disabled() {
+			return this.meta.properties?.status === "disabled";
+		},
+		optionType() {
+			return this.meta.properties?.type || "default";
 		},
 	},
 	setup() {
@@ -44,9 +45,25 @@ export default defineComponent({
 			value: ref(""),
 		};
 	},
+	watch: {
+		"meta.properties.options": {
+			deep: true,
+			handler() {
+				this.setValue();
+			},
+		},
+	},
 	methods: {
-		onChange() {},
-		onCustomChange() {},
+		setValue() {
+			let options = this.meta.properties?.options || [];
+			let v = "";
+			options.forEach((it) => {
+				if (it.checked) {
+					v = it.value;
+				}
+			});
+			this.value = v;
+		},
 	},
 });
 </script>

@@ -1,12 +1,12 @@
 <template>
-	<div class="skeleton-sider">
+	<div class="skeleton-sider" id="skeleton-sider">
 		<div class="skeleton-sider-menu">
 			<div
 				class="left-icon-item"
 				v-for="panel in panels"
 				:key="panel.id"
 				:id="panel.id"
-				@click="openPane(panel)"
+				@click="openPanel(panel)"
 			>
 				<component
 					:is="panel.icon"
@@ -22,10 +22,10 @@
 				<div class="sider-panel-title" style="width: 50%">
 					{{ title }}
 				</div>
-				<div class="sider-panel-action" style="">
-					<a @click="siderOpen = false">
+				<div class="sider-panel-action">
+					<span style="cursor: pointer" @click="closePanel">
 						<close-outlined />
-					</a>
+					</span>
 				</div>
 			</div>
 			<div class="skeleton-panel-body">
@@ -38,6 +38,12 @@
 					ref="componentPanel"
 					v-if="siderPanel === 'componentPanel'"
 				/>
+				<datasource-panel
+					ref="datasourcePanel"
+					:datasources="datasources"
+					@update="updateDatasources"
+					v-if="siderPanel === 'datasourcePanel'"
+				/>
 			</div>
 		</div>
 	</div>
@@ -47,6 +53,7 @@ import { defineComponent, ref } from "vue";
 
 import ComponentPanel from "./panel/ComponentPanel.vue";
 import StructurePanel from "./panel/StructurePanel.vue";
+import DatasourcePanel from "./panel/DatasourcePanel.vue";
 import $ from "jquery";
 const panels = [
 	{
@@ -59,11 +66,16 @@ const panels = [
 		name: "结构树",
 		icon: "pic-right-outlined",
 	},
+	{
+		id: "datasourcePanel",
+		name: "数据源",
+		icon: "api-outlined",
+	},
 ];
 export default defineComponent({
-	components: { ComponentPanel, StructurePanel },
-	props: ["components"],
-	emits: ["siderOpenClose"],
+	components: { ComponentPanel, StructurePanel, DatasourcePanel },
+	props: ["components", "datasources"],
+	emits: ["siderOpenClose", "updateDatasources"],
 	setup() {
 		return {
 			panels,
@@ -79,17 +91,24 @@ export default defineComponent({
 	},
 	mounted() {},
 	methods: {
-		openPane(panel) {
+		openPanel(panel) {
 			this.title = panel.name;
 			this.siderPanel = panel.id;
 			this.siderOpen = true;
 			$(".active").removeClass("active");
 			$("#" + panel.id).addClass("active");
 		},
+		closePanel() {
+			this.siderOpen = false;
+			$(".active").removeClass("active");
+		},
 		onClickComponent(data) {
 			if (this.$refs.structurePanel) {
 				this.$refs.structurePanel.onClickComponent(data);
 			}
+		},
+		updateDatasources(d) {
+			this.$emit("updateDatasources", d);
 		},
 	},
 });

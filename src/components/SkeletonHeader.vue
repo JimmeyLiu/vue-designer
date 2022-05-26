@@ -5,7 +5,7 @@
 		</div>
 		<div class="right">
 			<a-button class="action-item" @click="preview">预览</a-button>
-			<a-button class="action-item" @click="saveSchema" type="primary"
+			<a-button class="action-item" @click="save" type="primary"
 				>保存</a-button
 			>
 		</div>
@@ -40,21 +40,16 @@ import { defineComponent, ref } from "vue";
 
 export default defineComponent({
 	props: ["components"],
+	emits: ["save"],
 	setup() {
 		return {
 			showPreview: ref(false),
 			loaded: ref(false),
 		};
 	},
-	watch: {
-		components() {
-			this.render();
-		},
-	},
 	methods: {
-		saveSchema() {
-			localStorage.setItem("components", JSON.stringify(this.components));
-			this.$message.success("保存成功");
+		save() {
+			this.$emit("save");
 		},
 		preview() {
 			this.showPreview = true;

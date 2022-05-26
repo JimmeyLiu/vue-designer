@@ -1,22 +1,15 @@
-export const xmixin = {
-  props: ["meta", "data", "mode"],
-  mounted() {
-    this.value =  this.meta.defaultValue || "";
-  },
-  computed: {
-    label() {
-      return (
-        (this.data && this.data[this.meta.id]) ||
-        this.meta.properties?.label ||
-        "标题"
-      );
+export default {
+  methods: {
+    getBooleanValue(value, defaultValue) {
+      return value === undefined ? defaultValue : value;
     },
-    colon() {
-      let v = this.meta.properties?.colon;
-      return v === undefined ? true : v;
-    },
-    defaultValue() {
-      return this.meta.defaultValue || "";
+    mergeObject(target, source) {
+      Object.keys(source).forEach((key) => {
+        if (target[key] === undefined) {
+          target[key] = source[key];
+        }
+      });
+      return target;
     },
   },
 };

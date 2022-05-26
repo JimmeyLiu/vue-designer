@@ -33,5 +33,6 @@ export default defineComponent({
 <style>
 #container {
 	position: relative;
+	padding: 20px 100px;
 }
 </style>

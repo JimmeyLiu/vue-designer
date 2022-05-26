@@ -2,7 +2,7 @@
 import XForm from "./x-form";
 import XFormInput from "./x-form-input";
 import XFormInputNumber from "./x-form-input-number";
-import XFormTextarea from "./x-form-textarea";
+// import XFormTextarea from "./x-form-textarea";
 import XFormRichtext from "./x-form-richtext";
 import XFormSelect from "./x-form-select";
 import XFormSwitch from "./x-form-switch";
@@ -23,7 +23,6 @@ const components = [
   XFormTags,
   XFormRadio,
   XFormCheckbox,
-  XFormTextarea,
   XFormRichtext,
   XFormDatePicker,
   XFormDateRange,

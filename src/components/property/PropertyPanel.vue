@@ -1,12 +1,24 @@
 <template >
-	<page-render :components="components" />
+	<a-config-provider>
+		<template #renderEmpty>
+			<div style="text-align: center"><smile-outlined />请添加数据</div>
+		</template>
+		<component
+			v-if="propertyForm"
+			:is="propertyForm"
+			:meta="current"
+			:datasources="datasources"
+			v-bind="$attrs"
+		></component>
+		<page-render v-else :components="components" />
+	</a-config-provider>
 </template>
 <script>
 import { defineComponent, ref } from "vue";
 import PageRender from "../render/PageRender.vue";
 export default defineComponent({
 	components: { PageRender },
-	// props: ["propertyMetas", "propertyValues"],
+	props: ["datasources"],
 	setup() {
 		return {
 			current: ref({}),
@@ -17,6 +29,10 @@ export default defineComponent({
 		components() {
 			let meta = this.$xmetas[this.current.component];
 			return (meta && meta.panel && meta.panel.property) || [];
+		},
+		propertyForm() {
+			let meta = this.$xmetas[this.current.component];
+			return (meta && meta.panel && meta.panel.propertyForm) || undefined;
 		},
 	},
 	watch: {
@@ -31,6 +47,7 @@ export default defineComponent({
 			console.log("this.propertyValueMap", this.propertyValueMap);
 		},
 		onClickComponent(data) {
+			console.log("current edit", data);
 			this.current = data;
 		},
 	},
