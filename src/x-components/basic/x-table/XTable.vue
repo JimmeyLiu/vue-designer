@@ -11,9 +11,18 @@
 			:pagination="pagination"
 			:dataSource="dataSource"
 		>
-			<template #bodyCell="{ record, column }">
+			<template #bodyCell="{ column }">
 				<template v-if="enableAction && column.dataIndex === 'action'">
-					<a @click="editRecord(record)"><edit-outlined /></a>
+					<template
+						v-for="action in meta.properties.action.actions"
+						:key="action.id"
+					>
+						<a-button
+							class="action-button"
+							:type="meta.properties.action.buttonType"
+							>{{ action.title }}</a-button
+						>
+					</template>
 				</template>
 			</template>
 		</a-table>
@@ -155,5 +164,10 @@ export default defineComponent({
 <style>
 .table-striped td {
 	background-color: #fafafa;
+}
+.action-button {
+	padding: 0 4px !important;
+	height: 24px;
+	margin-left: 5px;
 }
 </style>

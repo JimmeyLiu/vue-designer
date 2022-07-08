@@ -44,6 +44,10 @@
 					@update="updateDatasources"
 					v-if="siderPanel === 'datasourcePanel'"
 				/>
+				<function-panel
+					ref="functionPanel"
+					v-if="siderPanel === 'functionPanel'"
+				/>
 			</div>
 		</div>
 	</div>
@@ -54,6 +58,8 @@ import { defineComponent, ref } from "vue";
 import ComponentPanel from "./panel/ComponentPanel.vue";
 import StructurePanel from "./panel/StructurePanel.vue";
 import DatasourcePanel from "./panel/DatasourcePanel.vue";
+import FunctionPanel from "./panel/FunctionPanel.vue";
+
 import $ from "jquery";
 const panels = [
 	{
@@ -71,9 +77,24 @@ const panels = [
 		name: "数据源",
 		icon: "api-outlined",
 	},
+	{
+		id: "functionPanel",
+		name: "函数库",
+		icon: "function-outlined",
+	},
+	{
+		id: "i18nPanel",
+		name: "国际化",
+		icon: "global-outlined",
+	},
 ];
 export default defineComponent({
-	components: { ComponentPanel, StructurePanel, DatasourcePanel },
+	components: {
+		ComponentPanel,
+		StructurePanel,
+		DatasourcePanel,
+		FunctionPanel,
+	},
 	props: ["components", "datasources"],
 	emits: ["siderOpenClose", "updateDatasources"],
 	setup() {
@@ -120,5 +141,9 @@ export default defineComponent({
 .active {
 	color: #197afe;
 	border-color: #197afe;
+}
+.skeleton-panel-body {
+	height: calc(100vh - 90px);
+	overflow-y: scroll;
 }
 </style>

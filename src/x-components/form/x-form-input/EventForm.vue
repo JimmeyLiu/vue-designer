@@ -1,7 +1,6 @@
 <template>
 	<a-form
 		:model="formState"
-		name="validate_other"
 		v-bind="formItemLayout"
 		@finishFailed="onFinishFailed"
 		@finish="onFinish"
@@ -10,54 +9,70 @@
 	>
 		<a-form-item label="标题">
 			<a-input
+				style="width: 120px"
 				v-model:value="formState.label"
-				defaultValue="开关"
-				@change="onChange"
+				defaultValue="单行文本"
 			>
 			</a-input>
-		</a-form-item>
-		<a-form-item label="显示冒号">
-			<a-switch
-				v-model:checked="formState.colon"
-				checked-children="是"
-				un-checked-children="否"
-				@change="onChange"
-			></a-switch>
+			<span>
+				显示冒号
+				<a-switch
+					v-model:checked="formState.colon"
+					checked-children="是"
+					un-checked-children="否"
+				></a-switch
+			></span>
 		</a-form-item>
 		<a-form-item label="字段名">
-			<a-input v-model:value="formState.name" defaultValue="text">
-			</a-input>
-		</a-form-item>
-
-		<a-form-item label="状态">
-			<a-radio-group v-model:value="formState.status" @change="onChange">
-				<a-radio-button value="normal">普通</a-radio-button>
-				<a-radio-button value="disabled">禁用</a-radio-button>
-			</a-radio-group>
-			<aim-outlined />
-		</a-form-item>
-		<a-form-item label="开启显示">
-			<a-input
-				v-model:value="formState.checkedChildren"
-				@change="onChange"
-			/>
-		</a-form-item>
-		<a-form-item label="关闭显示">
-			<a-input
-				v-model:value="formState.unCheckedChildren"
-				@change="onChange"
-			/>
+			<a-input v-model:value="formState.name"> </a-input>
 		</a-form-item>
 		<a-form-item label="默认值">
-			<a-switch
-				v-model:checked="formState.defaultValue"
-				:checkedChildren="formState.checkedChildren"
-				:unCheckedChildren="formState.unCheckedChildren"
-				@change="onChange"
-			/>
+			<a-input v-model:value="formState.defaultValue"> </a-input>
 		</a-form-item>
-
-		<a-collapse v-model:activeKey="activeKey" expandIconPosition="right">
+		<a-form-item label="占位提示">
+			<a-input v-model:value="formState.placeholder"> </a-input>
+		</a-form-item>
+		<!-- <a-form-item name="size" label="尺寸">
+			<a-radio-group v-model:value="formState.size">
+				<a-radio-button value="large">大</a-radio-button>
+				<a-radio-button value="middle">中</a-radio-button>
+				<a-radio-button value="small">小</a-radio-button>
+			</a-radio-group>
+		</a-form-item> -->
+		<a-form-item label="宽度">
+			<a-input-number
+				style="width: 178px"
+				v-model:value="formState.width"
+				addon-after="px"
+			></a-input-number>
+		</a-form-item>
+		<a-form-item label="类型">
+			<a-radio-group v-model:value="formState.type">
+				<a-radio-button value="input">单行</a-radio-button>
+				<a-radio-button value="textarea">多行</a-radio-button>
+				<a-radio-button value="password">密码</a-radio-button>
+			</a-radio-group>
+		</a-form-item>
+		<a-form-item label="状态">
+			<a-radio-group v-model:value="formState.status">
+				<a-radio-button value="normal">普通</a-radio-button>
+				<a-radio-button value="readonly">只读</a-radio-button>
+				<a-radio-button value="disabled">禁用</a-radio-button>
+			</a-radio-group>
+		</a-form-item>
+		<a-form-item label="显示字数" v-if="formState.type === 'input'">
+			<a-switch v-model:checked="formState.showCount"></a-switch>
+		</a-form-item>
+		<a-form-item label="清除按钮">
+			<a-switch v-model:checked="formState.allowClear"></a-switch>
+		</a-form-item>
+		<!-- <a-form-item name="autofocus" label="自动聚焦">
+			<a-switch
+				v-model:checked="formState.autofocus"
+				@change="onChange"
+			></a-switch>
+		</a-form-item> -->
+		<a-collapse expandIconPosition="right">
 			<a-collapse-panel key="1" header="校验">
 				<a-form-item label="数据格式">
 					<a-select
@@ -103,43 +118,48 @@
 					></a-input-number>
 				</a-form-item>
 			</a-collapse-panel>
-			<a-collapse-panel key="2" header="高级"> </a-collapse-panel>
+			<a-collapse-panel key="event" header="事件"> </a-collapse-panel>
 		</a-collapse>
 	</a-form>
 </template>
 <script>
 import { defineComponent, ref } from "vue";
-import lodash from "lodash";
+// import lodash from "lodash";
+import { mergeObject } from "@/utils";
 const form = {
-	options: [],
 	status: "normal",
-	optionType: "custom",
-	methodType: "jsonp",
+	size: "middle",
+	placeholder: "Please enter",
+	type: "input",
+	count: false,
+	maxCount: 200,
+	clear: false,
 };
 export default defineComponent({
 	components: {},
 	props: ["meta"],
 	emits: ["change"],
-	mounted() {
-		let properties = this.meta.properties || {};
-		this.formState = lodash.merge(form, properties);
-		if (!this.formState.name) {
-			this.formState.name = this.meta.id;
-		}
+	mounted() {},
+	watch: {
+		meta() {
+			let properties = this.meta.properties || {};
+			this.formState = mergeObject(properties, form);
+			this.formState.name = properties.name || this.meta.id;
+		},
+		formState: {
+			deep: true,
+			handler() {
+				this.onChange();
+			},
+		},
 	},
-	watch: {},
 	methods: {
 		onChange() {
-			this.$emit("change", {
-				id: this.meta.id,
-				properties: this.formState,
-			});
-		},
-		addOption() {
-			this.formState.options.push({});
-		},
-		deleteOption(index) {
-			this.formState.options.splice(index, 1);
+			console.log("formState change");
+			// this.$emit("change", {
+			// 	id: this.meta.id,
+			// 	properties: this.formState,
+			// });
 		},
 	},
 
@@ -162,7 +182,6 @@ export default defineComponent({
 
 		return {
 			formState: ref({}),
-			activeKey: ref("1"),
 			onFinish,
 			onFinishFailed,
 			formItemLayout,
@@ -177,7 +196,7 @@ export default defineComponent({
 	background: #eff2f5;
 }
 .ant-collapse-content > .ant-collapse-content-box {
-	padding: 10px 0 !important;
+	padding: 6px 0 !important;
 }
 .ant-collapse {
 	border: 0 !important;

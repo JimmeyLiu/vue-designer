@@ -8,23 +8,24 @@
 		:colon="false"
 		labelAlign="left"
 	>
-		<a-form-item name="label" label="标题">
+		<a-form-item label="标题">
 			<a-input
+				style="width: 140px"
 				v-model:value="formState.label"
 				defaultValue="下拉框"
 				@change="onChange"
 			>
 			</a-input>
-		</a-form-item>
-		<a-form-item name="label" label="显示冒号">
+			冒号
 			<a-switch
 				v-model:checked="formState.colon"
-				checked-children="是"
-				un-checked-children="否"
+				checked-children="显示"
+				un-checked-children="隐藏"
 				@change="onChange"
 			></a-switch>
 		</a-form-item>
-		<a-form-item name="name" label="字段名">
+
+		<a-form-item label="字段名">
 			<a-input v-model:value="formState.name" defaultValue="text">
 			</a-input>
 		</a-form-item>
@@ -36,7 +37,7 @@
 				@change="onChange"
 			></a-input-number>
 		</a-form-item>
-		<a-form-item name="status" label="状态">
+		<a-form-item label="状态">
 			<a-radio-group v-model:value="formState.status" @change="onChange">
 				<a-radio-button value="normal">普通</a-radio-button>
 				<a-radio-button value="disabled">禁用</a-radio-button>
@@ -219,7 +220,7 @@ const form = {
 export default defineComponent({
 	components: {},
 	props: ["meta"],
-	emits: ["change"],
+	emits: ["propertyChange"],
 	mounted() {
 		let properties = this.meta.properties || {};
 		this.formState = lodash.merge(form, properties);
@@ -230,8 +231,7 @@ export default defineComponent({
 	watch: {},
 	methods: {
 		onChange() {
-			console.log("formState change");
-			this.$emit("change", {
+			this.$emit("propertyChange", {
 				id: this.meta.id,
 				properties: this.formState,
 			});

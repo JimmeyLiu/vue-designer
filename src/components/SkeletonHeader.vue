@@ -53,6 +53,7 @@ export default defineComponent({
 		},
 		preview() {
 			this.showPreview = true;
+			this.render();
 		},
 		onIframeLoad() {
 			this.loaded = true;
@@ -60,7 +61,7 @@ export default defineComponent({
 		},
 
 		render() {
-			if (this.loaded && this.components) {
+			if (this.showPreview && this.loaded && this.components) {
 				document
 					.getElementById("preview")
 					.contentWindow.render(this.components);

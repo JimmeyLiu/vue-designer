@@ -196,16 +196,18 @@ export default defineComponent({
 		},
 		bindClick() {
 			let _this = this;
-			$(".x-component").click((e) => {
-				e.stopPropagation();
-				let target = $(e.target);
-				if (target.hasClass("x-component")) {
-					_this.bindComponentClick(target);
-				} else if (target.parent().hasClass("x-component")) {
-					//重新编辑的时候 target获取的是x-component-mask，需要获取其parent进行绑定
-					_this.bindComponentClick(target.parent());
-				}
-			});
+			$(".x-component")
+				.unbind()
+				.click((e) => {
+					e.stopPropagation();
+					let target = $(e.target);
+					if (target.hasClass("x-component")) {
+						_this.bindComponentClick(target);
+					} else if (target.parent().hasClass("x-component")) {
+						//重新编辑的时候 target获取的是x-component-mask，需要获取其parent进行绑定
+						_this.bindComponentClick(target.parent());
+					}
+				});
 		},
 		bindComponentClick(target) {
 			let id = target.attr("id");

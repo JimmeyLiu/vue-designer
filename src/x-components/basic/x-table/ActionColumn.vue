@@ -75,8 +75,9 @@
 <script>
 import { defineComponent, ref } from "vue";
 import lodash from "lodash";
-import mixin from "../../mixin";
 import ActionEditor from "./ActionEditor.vue";
+import { createUniqueId, mergeObject } from "@/utils";
+
 const defaultValues = {
 	enabled: false,
 	align: "left",
@@ -88,11 +89,10 @@ const defaultValues = {
 };
 export default defineComponent({
 	components: { ActionEditor },
-	mixins: [mixin],
 	props: ["action"],
 	mounted() {
 		let action = lodash.cloneDeep(this.action) || {};
-		this.data = this.mergeObject(action, defaultValues);
+		this.data = mergeObject(action, defaultValues);
 	},
 	watch: {
 		data: {
@@ -104,7 +104,7 @@ export default defineComponent({
 	},
 	methods: {
 		addAction() {
-			let action = { title: "操作" };
+			let action = { id: createUniqueId(), title: "操作" };
 			this.data.actions.push(action);
 			this.editAction(action);
 		},

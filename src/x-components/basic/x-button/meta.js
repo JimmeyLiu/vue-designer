@@ -1,12 +1,12 @@
-import XFormInput from "./XFormInput.vue";
+import XButton from "./XButton.vue";
 import PropertyForm from "./PropertyForm.vue";
 import EventForm from "./EventForm.vue";
 
 export default {
-  name: "x-form-input",
-  component: XFormInput,
-  title: "单行文本",
-  group: "form",
+  name: "x-button",
+  component: XButton,
+  title: "按钮",
+  group: "basic",
   panel: {
     propertyForm: PropertyForm,
     eventForm: EventForm,
@@ -15,13 +15,8 @@ export default {
     events: [
       {
         name: "click",
+        title: "点击按钮",
         args: ["e"],
-      },
-    ],
-    methods: [
-      {
-        name: "getValue",
-        args: [],
       },
     ],
   },

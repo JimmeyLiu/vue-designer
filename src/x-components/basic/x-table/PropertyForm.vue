@@ -77,7 +77,7 @@ const form = {
 export default defineComponent({
 	components: { TablePagination, DataColumn, ActionColumn, DataSource },
 	props: ["meta", "datasources"],
-	emits: ["change"],
+	emits: ["propertyChange"],
 	mounted() {
 		let properties = this.meta.properties || {};
 		Object.keys(form).forEach((key) => {
@@ -94,8 +94,7 @@ export default defineComponent({
 		formState: {
 			deep: true,
 			handler() {
-				console.log("setColumns formState", this.formState);
-				this.$emit("change", {
+				this.$emit("propertyChange", {
 					id: this.meta.id,
 					properties: this.formState,
 				});

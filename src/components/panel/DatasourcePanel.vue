@@ -5,8 +5,9 @@
 		</div>
 		<div>
 			<a-list size="small" :dataSource="data" :split="false">
+				<template #emptyText>没有数据源</template>
 				<template #renderItem="{ item, index }">
-					<a-list-item style="padding: '5px 10px'">
+					<a-list-item style="padding: '5px 10px'" :id="item.id">
 						<span>
 							<holder-outlined />
 							<a-tag color="blue">远程</a-tag>
@@ -44,7 +45,6 @@ import { defineComponent, ref } from "vue";
 import DatasourceEditor from "./DatasourceEditor.vue";
 import lodash from "lodash";
 import { createUniqueId } from "@/utils";
-
 export default defineComponent({
 	props: ["datasources"],
 	emits: ["update"],
@@ -68,6 +68,7 @@ export default defineComponent({
 	methods: {
 		editDatasource(item) {
 			this.$refs.datasourceEditor.edit(item);
+
 		},
 		createDatasource() {
 			this.$refs.datasourceEditor.create();
@@ -84,6 +85,9 @@ export default defineComponent({
 		onCreated(datasource) {
 			this.data.push(datasource);
 		},
+		choose(){
+			
+		}
 	},
 });
 </script>
@@ -111,6 +115,9 @@ export default defineComponent({
 .ant-drawer-content-wrapper {
 	box-shadow: -1px 0 1px -8px rgb(0 0 0 / 8%), -1px 0 1px 0 rgb(0 0 0 / 5%),
 		-1px 0 1px 0 rgb(0 0 0 / 3%);
+}
+.choosed{
+
 }
 </style>
 <style>

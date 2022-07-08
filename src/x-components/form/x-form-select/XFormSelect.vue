@@ -5,7 +5,7 @@
 		:id="meta.id"
 	>
 		<div v-if="mode === 'design'" class="x-component-mask"></div>
-		<a-form-item :label="label">
+		<a-form-item :label="label" :colon="colon">
 			<a-select
 				v-model:value="value"
 				:placeholder="meta.description"

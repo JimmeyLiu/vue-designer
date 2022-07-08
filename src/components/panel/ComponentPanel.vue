@@ -1,5 +1,5 @@
 <template>
-	<a-tabs style="height: calc(100vh - 180px)" id="component-pane">
+	<a-tabs id="component-pane">
 		<a-tab-pane key="1" tab="基础组件">
 			<div style="height: cal(100vh - 150px)">
 				<template v-for="group in components" :key="group.group">

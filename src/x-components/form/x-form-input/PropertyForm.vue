@@ -8,35 +8,30 @@
 		:colon="false"
 		labelAlign="left"
 	>
-		<a-form-item name="label" label="标题">
+		<a-form-item label="标题">
 			<a-input
-				style="width: 120px"
+				style="width: 140px"
 				v-model:value="formState.label"
 				defaultValue="单行文本"
-				@change="onChange"
 			>
 			</a-input>
 			<span>
-				显示冒号
+				冒号
 				<a-switch
 					v-model:checked="formState.colon"
-					checked-children="是"
-					un-checked-children="否"
-					@change="onChange"
+					checked-children="显示"
+					un-checked-children="隐藏"
 				></a-switch
 			></span>
 		</a-form-item>
-		<a-form-item name="name" label="字段名">
-			<a-input v-model:value="formState.name" defaultValue="text">
-			</a-input>
+		<a-form-item label="字段名">
+			<a-input v-model:value="formState.name"> </a-input>
 		</a-form-item>
-		<a-form-item name="defaultValue" label="默认值">
-			<a-input v-model:value="formState.defaultValue" @change="onChange">
-			</a-input>
+		<a-form-item label="默认值">
+			<a-input v-model:value="formState.defaultValue"> </a-input>
 		</a-form-item>
-		<a-form-item name="placeholder" label="占位提示">
-			<a-input v-model:value="formState.placeholder" @change="onChange">
-			</a-input>
+		<a-form-item label="占位提示">
+			<a-input v-model:value="formState.placeholder"> </a-input>
 		</a-form-item>
 		<!-- <a-form-item name="size" label="尺寸">
 			<a-radio-group v-model:value="formState.size">
@@ -50,34 +45,27 @@
 				style="width: 178px"
 				v-model:value="formState.width"
 				addon-after="px"
-				@change="onChange"
 			></a-input-number>
 		</a-form-item>
-		<a-form-item name="type" label="类型">
-			<a-radio-group v-model:value="formState.type" @change="onChange">
+		<a-form-item label="类型">
+			<a-radio-group v-model:value="formState.type">
 				<a-radio-button value="input">单行</a-radio-button>
 				<a-radio-button value="textarea">多行</a-radio-button>
 				<a-radio-button value="password">密码</a-radio-button>
 			</a-radio-group>
 		</a-form-item>
-		<a-form-item name="status" label="状态">
-			<a-radio-group v-model:value="formState.status" @change="onChange">
+		<a-form-item label="状态">
+			<a-radio-group v-model:value="formState.status">
 				<a-radio-button value="normal">普通</a-radio-button>
 				<a-radio-button value="readonly">只读</a-radio-button>
 				<a-radio-button value="disabled">禁用</a-radio-button>
 			</a-radio-group>
 		</a-form-item>
 		<a-form-item label="显示字数" v-if="formState.type === 'input'">
-			<a-switch
-				v-model:checked="formState.showCount"
-				@change="onChange"
-			></a-switch>
+			<a-switch v-model:checked="formState.showCount"></a-switch>
 		</a-form-item>
 		<a-form-item label="清除按钮">
-			<a-switch
-				v-model:checked="formState.allowClear"
-				@change="onChange"
-			></a-switch>
+			<a-switch v-model:checked="formState.allowClear"></a-switch>
 		</a-form-item>
 		<!-- <a-form-item name="autofocus" label="自动聚焦">
 			<a-switch
@@ -131,13 +119,14 @@
 					></a-input-number>
 				</a-form-item>
 			</a-collapse-panel>
-			<a-collapse-panel key="2" header="高级"> </a-collapse-panel>
+			<a-collapse-panel key="event" header="事件"> </a-collapse-panel>
 		</a-collapse>
 	</a-form>
 </template>
 <script>
 import { defineComponent, ref } from "vue";
-import lodash from "lodash";
+// import lodash from "lodash";
+import { mergeObject } from "@/utils";
 const form = {
 	status: "normal",
 	size: "middle",
@@ -150,22 +139,33 @@ const form = {
 export default defineComponent({
 	components: {},
 	props: ["meta"],
-	emits: ["change"],
+	emits: ["propertyChange"],
 	mounted() {
-		let properties = this.meta.properties || {};
-		this.formState = lodash.merge(form, properties);
-		if (!this.formState.name) {
-			this.formState.name = this.meta.id;
-		}
+		this.init();
 	},
-	watch: {},
+	watch: {
+		meta() {
+			this.init();
+		},
+		formState: {
+			deep: true,
+			handler() {
+				this.onChange();
+			},
+		},
+	},
 	methods: {
 		onChange() {
 			console.log("formState change");
-			this.$emit("change", {
+			this.$emit("propertyChange", {
 				id: this.meta.id,
 				properties: this.formState,
 			});
+		},
+		init() {
+			let properties = this.meta.properties || {};
+			this.formState = mergeObject(properties, form);
+			this.formState.name = properties.name || this.meta.id;
 		},
 	},
 

@@ -29,7 +29,7 @@
 					ref="propertiesPanel"
 					:components="components"
 					:datasources="datasources"
-					@change="onPropertiesChange"
+					@propertyChange="onPropertiesChange"
 				/>
 			</div>
 		</div>
@@ -141,6 +141,10 @@ export default defineComponent({
 			this.$refs.simulator.render(this.components);
 		},
 		onPropertiesChange(meta) {
+			if (!meta) {
+				return;
+			}
+			console.log("onPropertiesChange", meta);
 			this.componentMap[meta.id].properties = meta.properties;
 			this.$refs.simulator.render(this.components);
 		},
@@ -188,7 +192,7 @@ export default defineComponent({
 .skeleton-sider-panel {
 	background: #fff;
 	width: 300px;
-	height: calc(100vh - 120px);
+	height: calc(100vh - 48px);
 }
 .skeleton-panel-header {
 	display: flex;

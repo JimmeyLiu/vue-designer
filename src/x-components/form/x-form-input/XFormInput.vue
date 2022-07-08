@@ -16,7 +16,7 @@
 				:placeholder="placeholder"
 				:readonly="readonly"
 				:style="style"
-				@change="onChange"
+				@pressEnter="onPressEnter"
 			/>
 			<a-textarea
 				v-else-if="type === 'textarea'"
@@ -26,7 +26,7 @@
 				:maxlength="maxlength"
 				:placeholder="placeholder"
 				:style="style"
-				@change="onChange"
+				@pressEnter="onPressEnter"
 			/>
 			<a-input-password
 				v-else-if="type === 'password'"
@@ -36,13 +36,14 @@
 				:maxlength="maxlength"
 				:placeholder="placeholder"
 				:style="style"
-				@change="onChange"
+				@pressEnter="onPressEnter"
 			/>
 		</a-form-item>
 	</div>
 </template>
 <script>
 import { defineComponent, ref } from "vue";
+import eventbus from "../../eventbus";
 export default defineComponent({
 	props: ["meta", "data", "mode"],
 	name: "XFormInput",
@@ -58,6 +59,14 @@ export default defineComponent({
 	},
 	mounted() {
 		this.value = this.meta.properties?.defaultValue || "";
+	},
+	methods: {
+		onPressEnter(e) {
+			eventbus.emit(this.meta.id, "pressEnter", e);
+		},
+		getValue() {
+			return this.value;
+		},
 	},
 	computed: {
 		label() {
