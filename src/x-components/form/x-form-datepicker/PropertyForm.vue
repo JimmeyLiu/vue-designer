@@ -26,11 +26,11 @@
 				></a-switch
 			></span>
 		</a-form-item>
-		<a-form-item name="name" label="字段名">
+		<a-form-item label="字段名">
 			<a-input v-model:value="formState.name" defaultValue="text">
 			</a-input>
 		</a-form-item>
-		<a-form-item name="name" label="日期格式">
+		<a-form-item label="日期格式">
 			<a-select v-model:value="formState.format" @change="onChange">
 				<a-select-option value="YYYY-MM-DD">年-月-日</a-select-option>
 				<a-select-option value="YYYY-MM">年-月</a-select-option>
@@ -44,7 +44,7 @@
 				@change="onChange"
 			></a-input-number>
 		</a-form-item>
-		<a-form-item name="status" label="状态">
+		<a-form-item label="状态">
 			<a-radio-group v-model:value="formState.status" @change="onChange">
 				<a-radio-button value="normal">普通</a-radio-button>
 				<a-radio-button value="disabled">禁用</a-radio-button>

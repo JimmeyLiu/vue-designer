@@ -1,12 +1,14 @@
 <template>
 	<a-form
-		:model="values"
 		:label-col="labelCol"
 		:wrapper-col="wrapperCol"
 		:labelAlign="labelAlign"
 		class="x-component x-form"
 		data-component="x-form"
 		:id="meta.id"
+		:colon="colon"
+		:layout="layout"
+		:noStyle="true"
 	>
 		<x-component-slot
 			:meta="meta"
@@ -24,20 +26,40 @@ export default defineComponent({
 	components: {},
 	props: ["meta", "data", "mode"],
 	name: "XForm",
-	mounted() {},
+	mounted() {
+		
+	},
+	methods: {
+		getValue() {},
+		reset(){
+
+		}
+	},
 	computed: {
+		layout() {
+			return this.meta.properties?.layout || "horizontal";
+		},
 		labelAlign() {
-			return  this.meta.properties?.labelAlign || "right";
+			return this.meta.properties?.labelAlign || "right";
 		},
 		labelCol() {
+			if (this.meta.properties?.layout !== "horizontal") {
+				return {};
+			}
 			return {
 				span: this.meta.properties?.labelSpan || 6,
 			};
 		},
 		wrapperCol() {
+			if (this.meta.properties?.layout !== "horizontal") {
+				return {};
+			}
 			return {
 				span: this.meta.properties?.wrapperSpan || 18,
 			};
+		},
+		colon() {
+			return this.meta.properties?.colon || true;
 		},
 	},
 	setup() {
@@ -48,5 +70,9 @@ export default defineComponent({
 	},
 });
 </script>
-<style scoped>
+<style>
+.ant-form-inline .x-component-slot {
+	display: flex;
+	flex-flow: wrap;
+}
 </style>

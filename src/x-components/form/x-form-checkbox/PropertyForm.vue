@@ -8,7 +8,7 @@
 		:colon="false"
 		labelAlign="left"
 	>
-		<a-form-item name="label" label="标题">
+		<a-form-item label="标题">
 			<a-input
 				v-model:value="formState.label"
 				defaultValue="单行文本"
@@ -16,7 +16,7 @@
 			>
 			</a-input>
 		</a-form-item>
-		<a-form-item name="label" label="显示冒号">
+		<a-form-item label="显示冒号">
 			<a-switch
 				v-model:checked="formState.colon"
 				checked-children="是"
@@ -24,12 +24,12 @@
 				@change="onChange"
 			></a-switch>
 		</a-form-item>
-		<a-form-item name="name" label="字段名">
+		<a-form-item label="字段名">
 			<a-input v-model:value="formState.name" defaultValue="text">
 			</a-input>
 		</a-form-item>
 
-		<a-form-item name="status" label="状态">
+		<a-form-item label="状态">
 			<a-radio-group v-model:value="formState.status" @change="onChange">
 				<a-radio-button value="normal">普通</a-radio-button>
 				<a-radio-button value="disabled">禁用</a-radio-button>
